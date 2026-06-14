@@ -12,6 +12,8 @@ class Frame:
         self.id_frame = id_frame
         self.pagina_alocada = None  # Armazena o número da página ou None se estiver vazio
         # Dica para os alunos: vocês podem adicionar atributos aqui para ajudar no algoritmo (ex: timestamp, contador)
+        self.timestamp = 0  # LRU: instante do último acesso
+        self.ref_bit = 0    # Clock: bit de referência
 
 
 class TabelaPaginas:
@@ -76,6 +78,8 @@ class TabelaPaginas:
             print(f"[Frame {frame.id_frame}]: {conteudo}{marcador}")
 
         print("-" * 40)
+        
+    
 
 
 class Simulador:
