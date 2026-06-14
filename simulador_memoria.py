@@ -49,20 +49,18 @@ class TabelaPaginas:
         return False, frame_vitima_id
 
     def substituir_pagina(self, nova_pagina):
-        """
-        TODO: IMPLEMENTAR PELO GRUPO
-        Esta função deve escolher uma página 'vítima' para ser substituída
-        com base no algoritmo escolhido (FIFO ou LRU), atualizar o frame
-        escolhido com a nova_pagina e retornar o ID do frame que foi alterado.
-        """
-        frame_escolhido_id = 0
+        if self.algoritmo == "LRU":
+            return self._substituir_lru(nova_pagina)
+        elif self.algoritmo == "CLOCK":
+            return self._substituir_clock(nova_pagina)
 
-        # Escreva a lógica do algoritmo aqui...
+    def _substituir_lru(self, nova_pagina):
+        # Escolhe o frame com menor timestamp (usado há mais tempo)
+        vitima = min(self.frames, key=lambda f: f.timestamp)
+        vitima.pagina_alocada = nova_pagina
+        vitima.timestamp = self.total_acessos
+        return vitima.id_frame
 
-        # Exemplo de atualização (substitua pela lógica real):
-        # self.frames[frame_escolhido_id].pagina_alocada = nova_pagina
-
-        return frame_escolhido_id
 
     def imprimir_mapa_memoria(self, passo, pagina_acessada, foi_hit, frame_alterado=None):
         """
