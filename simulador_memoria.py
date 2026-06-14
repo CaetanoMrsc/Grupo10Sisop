@@ -38,11 +38,14 @@ class TabelaPaginas:
         self.total_page_faults += 1
 
         # 3. Verificar se existe algum frame vazio disponível
-        for frame in self.frames:
+          for frame in self.frames:
             if frame.pagina_alocada is None:
                 frame.pagina_alocada = numero_pagina
-                # TODO: Se necessário para o algoritmo, inicialize metadados do frame aqui.
-                return False, frame.id_frame  # Retorna (Hit=False, frame_id)
+                if self.algoritmo == "LRU":
+                    frame.timestamp = self.total_acessos
+                elif self.algoritmo == "CLOCK":
+                    frame.ref_bit = 1
+                return False, frame.id_frame
 
         # 4. Memória cheia: Aplicar algoritmo de substituição de página
         frame_vitima_id = self.substituir_pagina(numero_pagina)
