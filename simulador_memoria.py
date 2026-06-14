@@ -17,11 +17,13 @@ class Frame:
 
 
 class TabelaPaginas:
-    def __init__(self, num_frames):
-        # Inicializa a memória física com a quantidade de frames especificada
+    
+    def _init_(self, num_frames, algoritmo):
         self.frames = [Frame(i) for i in range(num_frames)]
         self.total_page_faults = 0
         self.total_acessos = 0
+        self.algoritmo = algoritmo.upper()
+        self.clock_ptr = 0  # ponteiro circular do algoritmo Clock
 
     def acessar_pagina(self, numero_pagina):
         self.total_acessos += 1
@@ -78,9 +80,7 @@ class TabelaPaginas:
             print(f"[Frame {frame.id_frame}]: {conteudo}{marcador}")
 
         print("-" * 40)
-        
-    
-
+           
 
 class Simulador:
     def __init__(self, caminho_arquivo):
