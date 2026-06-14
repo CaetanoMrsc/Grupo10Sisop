@@ -66,15 +66,9 @@ class TabelaPaginas:
 
 
     def imprimir_mapa_memoria(self, passo, pagina_acessada, foi_hit, frame_alterado=None):
-        """
-        TODO: IMPLEMENTAR PELO GRUPO
-        Esta função deve imprimir o estado atual da memória física (frames) no terminal,
-        conforme o padrão visual exigido no enunciado do trabalho.
-        """
         status = "Hit" if foi_hit else "Page Fault"
         print(f"\n--- Passo {passo}: Acesso à Página {pagina_acessada} ({status}) ---")
 
-        # Exemplo de iteração sobre os frames para os alunos completarem o print:
         for frame in self.frames:
             conteudo = f"Página {frame.pagina_alocada}" if frame.pagina_alocada is not None else "[Vazio]"
             marcador = " <-- Alterado" if frame.id_frame == frame_alterado and not foi_hit else ""
