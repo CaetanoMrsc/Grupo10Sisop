@@ -28,6 +28,7 @@ O segundo argumento aceita `LRU` ou `CLOCK`.
 
 ## Resultado caso teste
 
+```bash
 CLOCK                
 Iniciando simulação com 4 frames disponíveis.                                        
 ========================================
@@ -121,8 +122,8 @@ Total de Acessos: 12
 Total de Page Faults: 6
 Taxa de Page Faults: 50.00%
 ==============================================
-
-
+```
+```bash
 LRU                  
 Iniciando simulação com 4 frames disponíveis.                                        
 ========================================
@@ -216,3 +217,4 @@ Total de Acessos: 12
 Total de Page Faults: 6
 Taxa de Page Faults: 50.00%
 ==============================================
+```
