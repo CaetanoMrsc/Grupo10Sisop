@@ -1,6 +1,6 @@
 # Simulador de Gerência de Memória (Paginação)
 
-**Grupo 10:** LRU vs. Segunda Chance (Clock) — 4 frames.
+**Grupo 10:** LRU vs. Segunda Chance (Clock) — 4 frames: Caetano Marasca, Enrico Pheula, Felipe Ferreira, Gustavo Melleu
 
 ## Sobre
 
