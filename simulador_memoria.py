@@ -64,6 +64,20 @@ class TabelaPaginas:
         vitima.timestamp = self.total_acessos
         return vitima.id_frame
 
+    def _substituir_clock(self, nova_pagina):
+        # Percorre circularmente: ref_bit=1 → zera e avança; ref_bit=0 → substitui
+        while True:
+            frame = self.frames[self.clock_ptr]
+            if frame.ref_bit == 0:
+                frame.pagina_alocada = nova_pagina
+                frame.ref_bit = 1
+                vitima_id = self.clock_ptr
+                self.clock_ptr = (self.clock_ptr + 1) % len(self.frames)
+                return vitima_id
+            else:
+                frame.ref_bit = 0
+                self.clock_ptr = (self.clock_ptr + 1) % len(self.frames)
+
 
     def imprimir_mapa_memoria(self, passo, pagina_acessada, foi_hit, frame_alterado=None):
         status = "Hit" if foi_hit else "Page Fault"
