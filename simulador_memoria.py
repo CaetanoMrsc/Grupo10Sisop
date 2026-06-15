@@ -2,6 +2,7 @@
 ###     S I M U L A D O R    D E    M E M Ó R I A
 ###
 ### Prof. Filipo - github.com/ProfessorFilipo/MemSim/
+### Grupo 10: LRU vs. Segunda Chance (Clock) — 4 frames
 ###
 
 import sys
@@ -10,15 +11,13 @@ import sys
 class Frame:
     def __init__(self, id_frame):
         self.id_frame = id_frame
-        self.pagina_alocada = None  # Armazena o número da página ou None se estiver vazio
-        # Dica para os alunos: vocês podem adicionar atributos aqui para ajudar no algoritmo (ex: timestamp, contador)
+        self.pagina_alocada = None
         self.timestamp = 0  # LRU: instante do último acesso
         self.ref_bit = 0    # Clock: bit de referência
 
 
 class TabelaPaginas:
-    
-    def _init_(self, num_frames, algoritmo):
+    def __init__(self, num_frames, algoritmo):
         self.frames = [Frame(i) for i in range(num_frames)]
         self.total_page_faults = 0
         self.total_acessos = 0
@@ -31,14 +30,17 @@ class TabelaPaginas:
         # 1. Verificar se a página já está em algum frame (Hit)
         for frame in self.frames:
             if frame.pagina_alocada == numero_pagina:
-                # TODO: Se necessário para o algoritmo (ex: LRU), atualize metadados aqui.
-                return True, frame.id_frame  # Retorna (Hit=True, frame_id)
+                if self.algoritmo == "LRU":
+                    frame.timestamp = self.total_acessos
+                elif self.algoritmo == "CLOCK":
+                    frame.ref_bit = 1
+                return True, frame.id_frame
 
-        # 2. Se não encontrou, ocorreu um Page Fault!
+        # 2. Page Fault
         self.total_page_faults += 1
 
-        # 3. Verificar se existe algum frame vazio disponível
-          for frame in self.frames:
+        # 3. Frame vazio disponível?
+        for frame in self.frames:
             if frame.pagina_alocada is None:
                 frame.pagina_alocada = numero_pagina
                 if self.algoritmo == "LRU":
@@ -47,7 +49,7 @@ class TabelaPaginas:
                     frame.ref_bit = 1
                 return False, frame.id_frame
 
-        # 4. Memória cheia: Aplicar algoritmo de substituição de página
+        # 4. Memória cheia — aplicar algoritmo de substituição
         frame_vitima_id = self.substituir_pagina(numero_pagina)
         return False, frame_vitima_id
 
@@ -78,7 +80,6 @@ class TabelaPaginas:
                 frame.ref_bit = 0
                 self.clock_ptr = (self.clock_ptr + 1) % len(self.frames)
 
-
     def imprimir_mapa_memoria(self, passo, pagina_acessada, foi_hit, frame_alterado=None):
         status = "Hit" if foi_hit else "Page Fault"
         print(f"\n--- Passo {passo}: Acesso à Página {pagina_acessada} ({status}) ---")
@@ -89,11 +90,12 @@ class TabelaPaginas:
             print(f"[Frame {frame.id_frame}]: {conteudo}{marcador}")
 
         print("-" * 40)
-           
+
 
 class Simulador:
-    def __init__(self, caminho_arquivo):
+    def __init__(self, caminho_arquivo, algoritmo):
         self.caminho_arquivo = caminho_arquivo
+        self.algoritmo = algoritmo
 
     def executar(self):
         try:
@@ -103,33 +105,25 @@ class Simulador:
             print(f"Erro: O arquivo '{self.caminho_arquivo}' não foi encontrado.")
             return
 
-        # Limpa linhas vazias ou comentários se houver
         linhas = [l.strip() for l in linhas if l.strip() and not l.strip().startswith('#')]
 
         if not linhas:
             print("Erro: Arquivo de entrada vazio.")
             return
 
-        # A primeira linha válida define o número de frames na memória RAM simulada
         num_frames = int(linhas[0])
-        tabela_paginas = TabelaPaginas(num_frames)
+        tabela_paginas = TabelaPaginas(num_frames, self.algoritmo)
 
         print(f"Iniciando simulação com {num_frames} frames disponíveis.")
         print("=" * 40)
 
-        # As linhas seguintes são a sequência de acessos às páginas
         passo = 1
         for linha in linhas[1:]:
             numero_pagina = int(linha)
-
-            # Processa o acesso na tabela de páginas
             foi_hit, frame_id = tabela_paginas.acessar_pagina(numero_pagina)
-
-            # Renderiza o mapa de memória para o aluno ver o passo a passo
             tabela_paginas.imprimir_mapa_memoria(passo, numero_pagina, foi_hit, frame_id)
             passo += 1
 
-        # Exibição das estatísticas finais da simulação
         print("\n================ STATS FINAIS ================")
         print(f"Total de Acessos: {tabela_paginas.total_acessos}")
         print(f"Total de Page Faults: {tabela_paginas.total_page_faults}")
@@ -140,7 +134,17 @@ class Simulador:
 
 
 if __name__ == "__main__":
-    # Permite passar o arquivo de entrada por argumento de linha de comando ou usa um padrão
-    arquivo_entrada = sys.argv[1] if len(sys.argv) > 1 else "entrada.txt"
-    simulador = Simulador(arquivo_entrada)
+    if len(sys.argv) < 3:
+        print("Uso: python simulador_memoria.py <arquivo_entrada> <algoritmo>")
+        print("Algoritmos disponíveis: LRU, CLOCK")
+        sys.exit(1)
+
+    arquivo_entrada = sys.argv[1]
+    algoritmo = sys.argv[2].upper()
+
+    if algoritmo not in ("LRU", "CLOCK"):
+        print(f"Algoritmo '{algoritmo}' não reconhecido. Use LRU ou CLOCK.")
+        sys.exit(1)
+
+    simulador = Simulador(arquivo_entrada, algoritmo)
     simulador.executar()
