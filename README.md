@@ -218,3 +218,22 @@ Total de Page Faults: 6
 Taxa de Page Faults: 50.00%
 ==============================================
 ```
+
+### Análise
+
+Nesta carga específica, os dois algoritmos tiveram o mesmo desempenho (6 page
+faults, 50.00%). Isso acontece porque, com 4 frames e essa sequência de acessos,
+o LRU e o Clock escolheram as mesmas páginas como vítima em todos os momentos de
+substituição.
+
+Em sequências maiores ou com menos frames, os dois tendem a divergir, já que o
+Clock é apenas uma aproximação do LRU e pode manter páginas que o LRU já teria
+descartado. De forma geral, o LRU costuma gerar menos faults, ao custo de manter
+mais informação por página (timestamp de último acesso em cada frame).
+
+
+## Saída
+
+A cada acesso, o programa imprime o passo, o status (Hit ou Page Fault) e o
+estado de todos os frames, marcando com ⁠ <-- Alterado ⁠ o frame modificado.
+Ao final, exibe o total de acessos, total de page faults e a taxa percentual.
